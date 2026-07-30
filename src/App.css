@@ -92,6 +92,26 @@
   color: #45505d;
 }
 
+.streak-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0 0 12px;
+  border-radius: 8px;
+  background: #fbf1da;
+  padding: 8px 12px;
+}
+
+.streak-row strong {
+  color: #b8860b;
+  font-size: 16px;
+}
+
+.streak-row span {
+  color: #65717e;
+  font-size: 12px;
+}
+
 .hero-share a {
   display: inline-flex;
   align-items: center;

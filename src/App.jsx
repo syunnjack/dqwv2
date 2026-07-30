@@ -6,6 +6,9 @@ const TASKS_RESET_KEY = 'dqwv2.tasksLastReset'
 const EVENTS_KEY = 'dqwv2.events'
 const PARTY_GUIDES_KEY = 'dqwv2.partyGuides'
 const GEAR_LINKS_KEY = 'dqwv2.gearLinks'
+const STREAK_KEY = 'dqwv2.streak'
+
+const defaultStreak = { count: 0, bestCount: 0, lastCompletedDate: '' }
 
 const defaultTasks = [
   { id: 'task-walk', title: '今日の歩数目標を達成する', category: '移動', done: false },
@@ -87,12 +90,20 @@ function App() {
   const [partyGuides, setPartyGuides] = useState(() => readStorage(PARTY_GUIDES_KEY, defaultPartyGuides))
   const [guideForm, setGuideForm] = useState(emptyGuideForm)
   const [gearLinks, setGearLinks] = useState(() => readStorage(GEAR_LINKS_KEY, {}))
+  const [streak, setStreak] = useState(() => readStorage(STREAK_KEY, defaultStreak))
 
   useEffect(() => {
     const lastReset = readStorage(TASKS_RESET_KEY, '')
     if (lastReset !== today) {
       setTasks((current) => current.map((task) => ({ ...task, done: false })))
       localStorage.setItem(TASKS_RESET_KEY, JSON.stringify(today))
+
+      setStreak((current) => {
+        if (current.lastCompletedDate && daysBetween(current.lastCompletedDate, today) > 1) {
+          return { ...current, count: 0 }
+        }
+        return current
+      })
     }
   }, [today])
 
@@ -111,6 +122,24 @@ function App() {
   useEffect(() => {
     localStorage.setItem(GEAR_LINKS_KEY, JSON.stringify(gearLinks))
   }, [gearLinks])
+
+  useEffect(() => {
+    localStorage.setItem(STREAK_KEY, JSON.stringify(streak))
+  }, [streak])
+
+  useEffect(() => {
+    if (tasks.length === 0 || !tasks.every((task) => task.done)) return
+    setStreak((current) => {
+      if (current.lastCompletedDate === today) return current
+      const gap = current.lastCompletedDate ? daysBetween(current.lastCompletedDate, today) : null
+      const nextCount = gap === 1 ? current.count + 1 : 1
+      return {
+        count: nextCount,
+        bestCount: Math.max(current.bestCount, nextCount),
+        lastCompletedDate: today,
+      }
+    })
+  }, [tasks, today])
 
   const doneCount = tasks.filter((task) => task.done).length
 
@@ -173,7 +202,8 @@ function App() {
     setPartyGuides((current) => current.filter((guide) => guide.id !== guideId))
   }
 
-  const shareText = `今日の無課金ウォーカー日課: ${doneCount}/${tasks.length}件クリア！ #ドラクエウォーク #無課金勢`
+  const streakSuffix = streak.count > 0 ? `(${streak.count}日連続達成中🔥)` : ''
+  const shareText = `今日の無課金ウォーカー日課: ${doneCount}/${tasks.length}件クリア${streakSuffix}！ #ドラクエウォーク #無課金勢`
   const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`
 
   return (
@@ -196,6 +226,10 @@ function App() {
           <p className="eyebrow">Share</p>
           <h2>{doneCount}/{tasks.length}</h2>
           <p>今日の日課クリア数</p>
+          <div className="streak-row">
+            <strong>🔥 {streak.count}日連続</strong>
+            <span>ベスト {streak.bestCount}日</span>
+          </div>
           <a href={shareUrl} target="_blank" rel="noreferrer">Xでシェア</a>
         </div>
       </section>
