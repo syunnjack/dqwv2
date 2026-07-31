@@ -8,6 +8,7 @@
 
 .hero,
 .daily-tasks-section,
+.gem-plan-section,
 .events-section,
 .party-guide-section,
 .gear-section,
@@ -125,6 +126,7 @@
 }
 
 .daily-tasks-section,
+.gem-plan-section,
 .events-section,
 .party-guide-section,
 .gear-section {
@@ -250,6 +252,97 @@
 
 .wide-field {
   grid-column: 1 / -1;
+}
+
+.weekly-chart {
+  margin-top: 20px;
+  border-top: 1px solid rgba(23, 32, 42, 0.08);
+  padding-top: 16px;
+}
+
+.weekly-chart-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.weekly-chart-title h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.weekly-chart-title span {
+  color: #65717e;
+  font-size: 12px;
+}
+
+.weekly-bars {
+  display: flex;
+  gap: 12px;
+  align-items: end;
+  margin-top: 14px;
+}
+
+.weekly-bar-col {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.weekly-bar-track {
+  display: flex;
+  align-items: end;
+  width: 100%;
+  height: 100px;
+  border-radius: 6px;
+  background: #eef2f5;
+  overflow: hidden;
+}
+
+.weekly-bar-fill {
+  width: 100%;
+  border-radius: 6px 6px 0 0;
+  background: #2c5f8a;
+}
+
+.weekly-bar-col.today .weekly-bar-fill {
+  background: #b8860b;
+}
+
+.weekly-bar-col span {
+  font-size: 11px;
+  color: #65717e;
+}
+
+.weekly-bar-col small {
+  font-size: 11px;
+  color: #45505d;
+  font-weight: 700;
+}
+
+.gem-plan-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.gem-plan-grid label {
+  display: grid;
+  gap: 6px;
+  color: #45505d;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.gem-plan-result {
+  margin: 16px 0 0;
+  border-radius: 8px;
+  background: #eaf2f8;
+  color: #17456b;
+  font-weight: 700;
+  padding: 12px 14px;
 }
 
 .task-form button,
@@ -475,7 +568,8 @@ textarea {
 
   .task-form,
   .event-form,
-  .guide-form {
+  .guide-form,
+  .gem-plan-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -483,6 +577,7 @@ textarea {
 @media (max-width: 560px) {
   .hero,
   .daily-tasks-section,
+  .gem-plan-section,
   .events-section,
   .party-guide-section,
   .gear-section,

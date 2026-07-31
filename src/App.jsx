@@ -7,8 +7,12 @@ const EVENTS_KEY = 'dqwv2.events'
 const PARTY_GUIDES_KEY = 'dqwv2.partyGuides'
 const GEAR_LINKS_KEY = 'dqwv2.gearLinks'
 const STREAK_KEY = 'dqwv2.streak'
+const HISTORY_KEY = 'dqwv2.completionHistory'
+const GEM_PLAN_KEY = 'dqwv2.gemPlan'
 
 const defaultStreak = { count: 0, bestCount: 0, lastCompletedDate: '' }
+
+const defaultGemPlan = { currentGems: '', dailyGain: '', targetCost: '' }
 
 const defaultTasks = [
   { id: 'task-walk', title: '今日の歩数目標を達成する', category: '移動', done: false },
@@ -64,6 +68,11 @@ function daysBetween(fromDate, toDate) {
   return Math.round((to - from) / oneDay)
 }
 
+function toNumber(value) {
+  const parsed = Number(value)
+  return Number.isFinite(parsed) ? parsed : 0
+}
+
 function eventStatus(event, today) {
   if (!event.startDate && !event.endDate) return 'no-date'
   if (event.startDate && daysBetween(event.startDate, today) < 0) return 'upcoming'
@@ -91,10 +100,16 @@ function App() {
   const [guideForm, setGuideForm] = useState(emptyGuideForm)
   const [gearLinks, setGearLinks] = useState(() => readStorage(GEAR_LINKS_KEY, {}))
   const [streak, setStreak] = useState(() => readStorage(STREAK_KEY, defaultStreak))
+  const [history, setHistory] = useState(() => readStorage(HISTORY_KEY, []))
+  const [gemPlan, setGemPlan] = useState(() => readStorage(GEM_PLAN_KEY, defaultGemPlan))
 
   useEffect(() => {
     const lastReset = readStorage(TASKS_RESET_KEY, '')
     if (lastReset !== today) {
+      if (lastReset && tasks.length > 0) {
+        const doneOnLastDay = tasks.filter((task) => task.done).length
+        setHistory((current) => [...current, { date: lastReset, done: doneOnLastDay, total: tasks.length }].slice(-90))
+      }
       setTasks((current) => current.map((task) => ({ ...task, done: false })))
       localStorage.setItem(TASKS_RESET_KEY, JSON.stringify(today))
 
@@ -105,7 +120,7 @@ function App() {
         return current
       })
     }
-  }, [today])
+  }, [today, tasks])
 
   useEffect(() => {
     localStorage.setItem(TASKS_KEY, JSON.stringify(tasks))
@@ -128,6 +143,14 @@ function App() {
   }, [streak])
 
   useEffect(() => {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history))
+  }, [history])
+
+  useEffect(() => {
+    localStorage.setItem(GEM_PLAN_KEY, JSON.stringify(gemPlan))
+  }, [gemPlan])
+
+  useEffect(() => {
     if (tasks.length === 0 || !tasks.every((task) => task.done)) return
     setStreak((current) => {
       if (current.lastCompletedDate === today) return current
@@ -142,6 +165,18 @@ function App() {
   }, [tasks, today])
 
   const doneCount = tasks.filter((task) => task.done).length
+
+  const weeklyHistory = useMemo(() => {
+    const past = history.slice(-6)
+    return [...past, { date: today, done: doneCount, total: tasks.length }]
+  }, [history, today, doneCount, tasks.length])
+
+  const gemDailyGain = toNumber(gemPlan.dailyGain)
+  const gemGap = toNumber(gemPlan.targetCost) - toNumber(gemPlan.currentGems)
+  const gemDaysNeeded = gemGap <= 0 ? 0 : gemDailyGain > 0 ? Math.ceil(gemGap / gemDailyGain) : null
+  const gemReadyDate = gemDaysNeeded !== null
+    ? formatLocalDateKey(new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + gemDaysNeeded))
+    : null
 
   const toggleTask = (taskId) => {
     setTasks((current) => current.map((task) => (task.id === taskId ? { ...task, done: !task.done } : task)))
@@ -282,6 +317,79 @@ function App() {
           </label>
           <button type="submit">日課を追加</button>
         </form>
+        <div className="weekly-chart">
+          <div className="weekly-chart-title">
+            <h3>直近7日間の消化率</h3>
+            <span>今日の分はリアルタイム反映</span>
+          </div>
+          <div className="weekly-bars">
+            {weeklyHistory.map((day) => {
+              const rate = day.total > 0 ? (day.done / day.total) * 100 : 0
+              const isToday = day.date === today
+              return (
+                <div className={`weekly-bar-col ${isToday ? 'today' : ''}`} key={day.date}>
+                  <div className="weekly-bar-track">
+                    <div className="weekly-bar-fill" style={{ height: `${Math.max(4, rate)}%` }} />
+                  </div>
+                  <span>{day.date.slice(5).replace('-', '/')}</span>
+                  <small>{day.done}/{day.total}</small>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="gem-plan-section" aria-label="ジェム貯蓄プランナー">
+        <div className="section-title">
+          <div>
+            <p className="eyebrow">Gem planner</p>
+            <h2>ジェム貯蓄プランナー</h2>
+            <p>
+              現在の所持ジェム、1日の平均獲得数、狙っているふくびきの必要数を入れると、
+              到達までの見込み日数を計算します。数値はすべて自分で入力した目安です。
+            </p>
+          </div>
+        </div>
+        <div className="gem-plan-grid">
+          <label>
+            現在の所持ジェム
+            <input
+              type="number"
+              min="0"
+              value={gemPlan.currentGems}
+              onChange={(event) => setGemPlan({ ...gemPlan, currentGems: event.target.value })}
+              placeholder="例: 1200"
+            />
+          </label>
+          <label>
+            1日の平均獲得ジェム
+            <input
+              type="number"
+              min="0"
+              value={gemPlan.dailyGain}
+              onChange={(event) => setGemPlan({ ...gemPlan, dailyGain: event.target.value })}
+              placeholder="例: 30"
+            />
+          </label>
+          <label>
+            目標のふくびき必要数
+            <input
+              type="number"
+              min="0"
+              value={gemPlan.targetCost}
+              onChange={(event) => setGemPlan({ ...gemPlan, targetCost: event.target.value })}
+              placeholder="例: 3000"
+            />
+          </label>
+        </div>
+        <p className="gem-plan-result">
+          {gemGap <= 0
+            ? '目標には既に到達しています。'
+            : gemDaysNeeded === null
+              ? '1日の平均獲得ジェムを入力すると、到達見込みを計算します。'
+              : `あと約${gemDaysNeeded}日で目標に到達する見込みです(${gemReadyDate}ごろ)。`}
+        </p>
       </section>
 
       <section className="events-section" id="events" aria-label="イベント情報">
