@@ -11,6 +11,7 @@
 .gem-plan-section,
 .events-section,
 .party-guide-section,
+.tips-section,
 .gear-section,
 .ad-section {
   width: min(1100px, calc(100% - 40px));
@@ -66,8 +67,7 @@
   text-decoration: none;
 }
 
-.hero-actions a:nth-child(2),
-.hero-actions a:nth-child(3) {
+.hero-actions a:nth-child(n + 2) {
   background: #fff;
   color: #2c5f8a;
 }
@@ -129,6 +129,7 @@
 .gem-plan-section,
 .events-section,
 .party-guide-section,
+.tips-section,
 .gear-section {
   margin-bottom: 18px;
   border: 1px solid rgba(23, 32, 42, 0.1);
@@ -227,7 +228,8 @@
 
 .task-form,
 .event-form,
-.guide-form {
+.guide-form,
+.tip-form {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
@@ -236,7 +238,8 @@
 
 .task-form label,
 .event-form label,
-.guide-form label {
+.guide-form label,
+.tip-form label {
   display: grid;
   gap: 6px;
   color: #45505d;
@@ -246,7 +249,8 @@
 
 .task-form textarea,
 .event-form textarea,
-.guide-form textarea {
+.guide-form textarea,
+.tip-form textarea {
   min-height: 72px;
 }
 
@@ -348,6 +352,7 @@
 .task-form button,
 .event-form button,
 .guide-form button,
+.tip-form button,
 .task-card-foot button {
   display: inline-flex;
   align-items: center;
@@ -476,6 +481,56 @@
   padding: 6px 10px;
 }
 
+.tip-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.tip-card {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  border: 1px solid rgba(23, 32, 42, 0.1);
+  border-radius: 8px;
+  background: #fbfcfd;
+  padding: 14px;
+}
+
+.tip-category {
+  width: fit-content;
+  border-radius: 999px;
+  background: #eaf2f8;
+  color: #2c5f8a;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 8px;
+}
+
+.tip-card h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.tip-card p {
+  margin: 0;
+  color: #45505d;
+  line-height: 1.6;
+}
+
+.tip-card button {
+  justify-self: start;
+  border: 1px solid #a02b36;
+  border-radius: 8px;
+  background: #fff;
+  color: #a02b36;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 6px 10px;
+}
+
 .gear-list {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -569,6 +624,7 @@ textarea {
   .task-form,
   .event-form,
   .guide-form,
+  .tip-form,
   .gem-plan-grid {
     grid-template-columns: 1fr;
   }
@@ -580,6 +636,7 @@ textarea {
   .gem-plan-section,
   .events-section,
   .party-guide-section,
+  .tips-section,
   .gear-section,
   .ad-section {
     width: min(100% - 24px, 1100px);
@@ -587,6 +644,7 @@ textarea {
 
   .task-list,
   .event-list,
+  .tip-list,
   .gear-list {
     grid-template-columns: 1fr;
   }

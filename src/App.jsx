@@ -5,6 +5,7 @@ const TASKS_KEY = 'dqwv2.dailyTasks'
 const TASKS_RESET_KEY = 'dqwv2.tasksLastReset'
 const EVENTS_KEY = 'dqwv2.events'
 const PARTY_GUIDES_KEY = 'dqwv2.partyGuides'
+const TIPS_KEY = 'dqwv2.tips'
 const GEAR_LINKS_KEY = 'dqwv2.gearLinks'
 const STREAK_KEY = 'dqwv2.streak'
 const HISTORY_KEY = 'dqwv2.completionHistory'
@@ -37,6 +38,53 @@ const defaultPartyGuides = [
 ]
 
 const emptyGuideForm = { name: '', roles: '', reason: '', equipment: '' }
+
+const defaultTips = [
+  {
+    id: 'tip-1',
+    category: 'オートバトル設定',
+    title: '回復役の「めいれい」は回復優先の設定にする',
+    body: 'オートバトルは回復のタイミングを細かく指定できないため、回復役には「いのちだいじに」寄りのめいれいを設定し、HPが減ったら自動で回復に回るようにすると安定しやすい。',
+  },
+  {
+    id: 'tip-2',
+    category: 'オートバトル設定',
+    title: '状態異常耐性を最優先で確保する',
+    body: '混乱・眠り・麻痺などの状態異常はオートバトル最大の事故要因。装備やこころで耐性を上げられる手段があれば、攻撃力より優先して整えると全滅しにくくなる。',
+  },
+  {
+    id: 'tip-3',
+    category: 'パーティ編成',
+    title: '前列アタッカー+後列サポートの基本配置',
+    body: '前列に物理アタッカーを置き、後列に回復・補助役をまとめる基本配置は無課金編成でも安定しやすい。回復役が前列で狙われると事故につながりやすいので注意。',
+  },
+  {
+    id: 'tip-4',
+    category: '装備・こころ',
+    title: '無料入手分のこころはHP・耐性系を優先して付け替える',
+    body: '課金なしで集まるこころ(スキル系オーブ)は数が限られるため、攻撃力より先にHP増加・状態異常耐性系を優先して付けると、オートバトルの安定度が上がりやすい。',
+  },
+  {
+    id: 'tip-5',
+    category: '周回・効率',
+    title: 'メタル系モンスターは無課金の経験値効率の軸にする',
+    body: 'メタル系モンスターの討伐は経験値効率が良いことが多く、無課金でレベルを伸ばす基本ルートになりやすい。出現状況を見つけたら優先的に討伐しておく。',
+  },
+  {
+    id: 'tip-6',
+    category: '周回・効率',
+    title: 'ミニメダル交換は無課金戦力の重要な補給源',
+    body: '無料で集まるミニメダルの交換ラインナップには、期間限定のこころや装備が並ぶことがある。定期的に交換所を確認し、今の編成に合うものを優先する。',
+  },
+  {
+    id: 'tip-7',
+    category: 'パーティ編成',
+    title: '挑戦前に戦闘力の底上げを優先する',
+    body: 'ボスのレベルに対してパーティの戦闘力が大きく不足していると、オートバトルでは為す術なく全滅しやすい。無理に挑戦する前に装備・レベルの底上げを優先する。',
+  },
+]
+
+const emptyTipForm = { category: 'オートバトル設定', title: '', body: '' }
 
 const gearCategories = [
   { id: 'battery', label: 'モバイルバッテリー', hint: '長時間の外歩き対策' },
@@ -98,6 +146,8 @@ function App() {
   const [eventForm, setEventForm] = useState(emptyEventForm)
   const [partyGuides, setPartyGuides] = useState(() => readStorage(PARTY_GUIDES_KEY, defaultPartyGuides))
   const [guideForm, setGuideForm] = useState(emptyGuideForm)
+  const [tips, setTips] = useState(() => readStorage(TIPS_KEY, defaultTips))
+  const [tipForm, setTipForm] = useState(emptyTipForm)
   const [gearLinks, setGearLinks] = useState(() => readStorage(GEAR_LINKS_KEY, {}))
   const [streak, setStreak] = useState(() => readStorage(STREAK_KEY, defaultStreak))
   const [history, setHistory] = useState(() => readStorage(HISTORY_KEY, []))
@@ -133,6 +183,10 @@ function App() {
   useEffect(() => {
     localStorage.setItem(PARTY_GUIDES_KEY, JSON.stringify(partyGuides))
   }, [partyGuides])
+
+  useEffect(() => {
+    localStorage.setItem(TIPS_KEY, JSON.stringify(tips))
+  }, [tips])
 
   useEffect(() => {
     localStorage.setItem(GEAR_LINKS_KEY, JSON.stringify(gearLinks))
@@ -237,6 +291,20 @@ function App() {
     setPartyGuides((current) => current.filter((guide) => guide.id !== guideId))
   }
 
+  const addTip = (event) => {
+    event.preventDefault()
+    if (!tipForm.title.trim()) return
+    setTips((current) => [
+      { id: crypto.randomUUID(), ...tipForm, title: tipForm.title.trim(), body: tipForm.body.trim() },
+      ...current,
+    ])
+    setTipForm(emptyTipForm)
+  }
+
+  const deleteTip = (tipId) => {
+    setTips((current) => current.filter((tip) => tip.id !== tipId))
+  }
+
   const streakSuffix = streak.count > 0 ? `(${streak.count}日連続達成中🔥)` : ''
   const shareText = `今日の無課金ウォーカー日課: ${doneCount}/${tasks.length}件クリア${streakSuffix}！ #ドラクエウォーク #無課金勢`
   const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`
@@ -255,6 +323,7 @@ function App() {
             <a href="#daily-tasks">日課チェックリストへ</a>
             <a href="#events">イベント情報へ</a>
             <a href="#party-guide">編成ガイドへ</a>
+            <a href="#tips">TIPSへ</a>
           </div>
         </div>
         <div className="hero-share">
@@ -504,6 +573,59 @@ function App() {
             </article>
           ))}
           {partyGuides.length === 0 && <p className="empty-text">編成ガイドを追加すると、ここに一覧表示されます。</p>}
+        </div>
+      </section>
+
+      <section className="tips-section" id="tips" aria-label="無課金・オートバトルTIPS">
+        <div className="section-title">
+          <div>
+            <p className="eyebrow">F2P &amp; auto-battle tips</p>
+            <h2>無課金・オートバトル安定化のTIPS</h2>
+            <p>
+              ゲームアップデートで仕様が変わることがあるため、内容はあくまで目安です。
+              実際のプレイで検証しながら、内容を編集・追加して育ててください。
+            </p>
+          </div>
+        </div>
+        <form className="tip-form" onSubmit={addTip}>
+          <label>
+            カテゴリ
+            <select value={tipForm.category} onChange={(event) => setTipForm({ ...tipForm, category: event.target.value })}>
+              <option>オートバトル設定</option>
+              <option>パーティ編成</option>
+              <option>装備・こころ</option>
+              <option>周回・効率</option>
+              <option>その他</option>
+            </select>
+          </label>
+          <label className="wide-field">
+            タイトル
+            <input
+              value={tipForm.title}
+              onChange={(event) => setTipForm({ ...tipForm, title: event.target.value })}
+              placeholder="例: 状態異常耐性を最優先で確保する"
+            />
+          </label>
+          <label className="wide-field">
+            内容
+            <textarea
+              value={tipForm.body}
+              onChange={(event) => setTipForm({ ...tipForm, body: event.target.value })}
+              placeholder="具体的な理由・やり方をメモ"
+            />
+          </label>
+          <button type="submit">TIPSを追加</button>
+        </form>
+        <div className="tip-list">
+          {tips.map((tip) => (
+            <article className="tip-card" key={tip.id}>
+              <span className="tip-category">{tip.category}</span>
+              <h3>{tip.title}</h3>
+              <p>{tip.body}</p>
+              <button type="button" onClick={() => deleteTip(tip.id)}>削除</button>
+            </article>
+          ))}
+          {tips.length === 0 && <p className="empty-text">TIPSを追加すると、ここに一覧表示されます。</p>}
         </div>
       </section>
 
