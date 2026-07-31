@@ -21,10 +21,12 @@
 
 ## デプロイ先
 
-https://syunnjack.github.io/dqwv2/
+https://dqw-navi.com/ （独自ドメイン、お名前.comで取得）
 
 GitHub Actions（`.github/workflows/deploy.yml`）により、`main` ブランチへのpush時に
-自動でビルド & デプロイされる。GitHub Pagesはリポジトリ側で有効化済み。
+自動でビルド & デプロイされる。GitHub Pagesはリポジトリ側で有効化済み。カスタムドメインは
+`public/CNAME` と GitHub Pages設定の両方に登録済み。DNS側はお名前.comでAレコード
+(185.199.108.153 / .109.153 / .110.153 / .111.153) をdqw-navi.comの@に向ける必要がある。
 
 ## 収益導線
 
