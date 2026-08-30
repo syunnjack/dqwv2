@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dqw-navi.com/sitemap.xml
