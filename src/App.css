@@ -1,656 +1,329 @@
-.app-shell {
-  min-height: 100svh;
-  color: #17202a;
-  background:
-    linear-gradient(180deg, rgba(230, 240, 247, 0.9), rgba(247, 249, 251, 0.96)),
-    #f3f6f9;
+/* 検証記録のサイト。読み手は歩きながら片手で見ることが多いので、
+   文字を詰めすぎず、入力欄は指で押せる大きさにしている。 */
+
+:root {
+  --bg: #0f1420;
+  --surface: #172032;
+  --surface-2: #1e293e;
+  --text: #e8edf6;
+  --muted: #94a3bd;
+  --line: #2b3752;
+  --accent: #5b9cff;
+  --ok: #4ade80;
+  --warn: #fbbf24;
+  --ng: #f87171;
 }
 
-.hero,
-.daily-tasks-section,
-.gem-plan-section,
-.events-section,
-.party-guide-section,
-.tips-section,
-.gear-section,
-.ad-section {
-  width: min(1100px, calc(100% - 40px));
-  margin: 0 auto;
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f5f7fb;
+    --surface: #ffffff;
+    --surface-2: #eef2f9;
+    --text: #1a2233;
+    --muted: #5d6b85;
+    --line: #dbe2ee;
+    --accent: #2563eb;
+    --ok: #15803d;
+    --warn: #b45309;
+    --ng: #b91c1c;
+  }
 }
 
-.hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(240px, 0.6fr);
-  gap: 24px;
-  align-items: end;
-  padding: 44px 0 24px;
+* {
+  box-sizing: border-box;
 }
 
-.eyebrow {
+body {
   margin: 0;
-  color: #2c5f8a;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.hero h1 {
-  margin: 8px 0 0;
-  font-size: 40px;
-  line-height: 1.2;
-}
-
-.hero .lead {
-  margin: 12px 0 0;
-  max-width: 640px;
-  color: #45505d;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic', sans-serif;
   line-height: 1.8;
 }
 
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 18px;
+.app {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 1.5rem 1.1rem 4rem;
 }
 
-.hero-actions a {
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid #2c5f8a;
-  border-radius: 8px;
-  background: #2c5f8a;
-  color: #fff;
-  font-weight: 800;
-  padding: 10px 14px;
-  text-decoration: none;
+/* 冒頭 */
+.hero {
+  margin-bottom: 2.5rem;
 }
 
-.hero-actions a:nth-child(n + 2) {
-  background: #fff;
-  color: #2c5f8a;
+.eyebrow {
+  margin: 0 0 0.4rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  font-weight: 700;
 }
 
-.hero-share {
+.hero h1 {
+  margin: 0 0 0.9rem;
+  font-size: 1.65rem;
+  line-height: 1.45;
+}
+
+.lead {
+  margin: 0 0 1.4rem;
+  color: var(--muted);
+}
+
+.summary {
   display: grid;
-  justify-items: start;
-  gap: 4px;
-  border: 1px solid rgba(23, 32, 42, 0.12);
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 16px 42px rgba(23, 60, 90, 0.1);
-  padding: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(6.5rem, 1fr));
+  gap: 0.6rem;
+  margin: 0;
 }
 
-.hero-share h2 {
-  margin: 4px 0 0;
-  font-size: 34px;
+.summary div {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  padding: 0.7rem 0.8rem;
 }
 
-.hero-share p {
-  margin: 0 0 8px;
-  color: #45505d;
+.summary dt {
+  font-size: 0.72rem;
+  color: var(--muted);
 }
 
-.streak-row {
+.summary dd {
+  margin: 0.15rem 0 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.note {
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+/* 各区画 */
+section {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  padding: 1.3rem 1.2rem;
+  margin-bottom: 1.4rem;
+}
+
+section h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.15rem;
+}
+
+.section-lead {
+  margin: 0 0 1.2rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* 入力欄 */
+.field {
   display: flex;
-  align-items: baseline;
-  gap: 10px;
-  margin: 0 0 12px;
-  border-radius: 8px;
-  background: #fbf1da;
-  padding: 8px 12px;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 0.9rem;
 }
 
-.streak-row strong {
-  color: #b8860b;
-  font-size: 16px;
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-height: 2.7rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 0.45rem;
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.95rem;
 }
 
-.streak-row span {
-  color: #65717e;
-  font-size: 12px;
-}
-
-.hero-share a {
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid #2c5f8a;
-  border-radius: 8px;
-  background: #2c5f8a;
-  color: #fff;
-  font-weight: 800;
-  padding: 8px 14px;
-  text-decoration: none;
-}
-
-.daily-tasks-section,
-.gem-plan-section,
-.events-section,
-.party-guide-section,
-.tips-section,
-.gear-section {
-  margin-bottom: 18px;
-  border: 1px solid rgba(23, 32, 42, 0.1);
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 16px 42px rgba(23, 60, 90, 0.06);
-  padding: 22px;
-}
-
-.section-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-}
-
-.section-title h2 {
-  margin: 6px 0 0;
-  font-size: 24px;
-}
-
-.section-title p {
-  margin: 8px 0 0;
-  max-width: 640px;
-  color: #45505d;
+.field textarea {
+  min-height: auto;
+  resize: vertical;
   line-height: 1.7;
 }
 
-.task-progress {
-  display: grid;
-  justify-items: center;
-  gap: 2px;
-  border-radius: 8px;
-  background: #eaf2f8;
-  color: #2c5f8a;
-  padding: 10px 16px;
+.field a {
+  color: var(--accent);
+  font-size: 0.82rem;
 }
 
-.task-progress strong {
-  font-size: 20px;
-}
-
-.task-progress span {
-  font-size: 11px;
-  font-weight: 800;
-}
-
-.task-list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.task-card {
-  display: grid;
-  gap: 8px;
-  border: 1px solid rgba(23, 32, 42, 0.1);
-  border-left: 5px solid #cbd2d8;
-  border-radius: 8px;
-  background: #fbfcfd;
-  padding: 12px;
-}
-
-.task-card.done {
-  border-left-color: #2c5f8a;
-  background: #f2f7fb;
-}
-
-.task-card label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+button.primary {
+  min-height: 2.8rem;
+  padding: 0.6rem 1.4rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: var(--accent);
+  color: #fff;
+  font: inherit;
   font-weight: 700;
+  cursor: pointer;
 }
 
-.task-card.done label span {
-  color: #45505d;
-  text-decoration: line-through;
+button:not(.primary) {
+  margin-top: 0.6rem;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
 }
 
-.task-card-foot {
+/* 検証の条件 */
+.rule-toggles {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.rule-toggle {
+  display: flex;
   align-items: center;
-}
-
-.task-category {
+  gap: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--line);
   border-radius: 999px;
-  background: #eaf2f8;
-  color: #2c5f8a;
-  font-size: 11px;
-  font-weight: 800;
-  padding: 3px 8px;
+  background: var(--surface-2);
+  font-size: 0.88rem;
+  cursor: pointer;
 }
 
-.task-form,
-.event-form,
-.guide-form,
-.tip-form {
+.rule-toggle input {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+/* 記録のフォーム */
+.run-form,
+.setup-form,
+.note-form {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0 0.9rem;
+  align-items: start;
 }
 
-.task-form label,
-.event-form label,
-.guide-form label,
-.tip-form label {
-  display: grid;
-  gap: 6px;
-  color: #45505d;
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.task-form textarea,
-.event-form textarea,
-.guide-form textarea,
-.tip-form textarea {
-  min-height: 72px;
-}
-
-.wide-field {
+.field-wide {
   grid-column: 1 / -1;
 }
 
-.weekly-chart {
-  margin-top: 20px;
-  border-top: 1px solid rgba(23, 32, 42, 0.08);
-  padding-top: 16px;
+.run-form button,
+.setup-form button,
+.note-form button {
+  grid-column: 1 / -1;
+  justify-self: start;
 }
 
-.weekly-chart-title {
+/* 記録の一覧 */
+.run-list,
+.setup-list,
+.note-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.run-card,
+.setup-card,
+.note-card {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--line);
+  border-radius: 0.55rem;
+  padding: 0.9rem 1rem;
+}
+
+.run-card.result-cleared {
+  border-left-color: var(--ok);
+}
+
+.run-card.result-unstable {
+  border-left-color: var(--warn);
+}
+
+.run-card.result-failed {
+  border-left-color: var(--ng);
+}
+
+.run-head {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem;
   align-items: baseline;
+  justify-content: space-between;
 }
 
-.weekly-chart-title h3 {
-  margin: 0;
-  font-size: 16px;
-}
-
-.weekly-chart-title span {
-  color: #65717e;
-  font-size: 12px;
-}
-
-.weekly-bars {
-  display: flex;
-  gap: 12px;
-  align-items: end;
-  margin-top: 14px;
-}
-
-.weekly-bar-col {
-  display: grid;
-  justify-items: center;
-  gap: 4px;
-  flex: 1;
-}
-
-.weekly-bar-track {
-  display: flex;
-  align-items: end;
-  width: 100%;
-  height: 100px;
-  border-radius: 6px;
-  background: #eef2f5;
-  overflow: hidden;
-}
-
-.weekly-bar-fill {
-  width: 100%;
-  border-radius: 6px 6px 0 0;
-  background: #2c5f8a;
-}
-
-.weekly-bar-col.today .weekly-bar-fill {
-  background: #b8860b;
-}
-
-.weekly-bar-col span {
-  font-size: 11px;
-  color: #65717e;
-}
-
-.weekly-bar-col small {
-  font-size: 11px;
-  color: #45505d;
-  font-weight: 700;
-}
-
-.gem-plan-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 16px;
-}
-
-.gem-plan-grid label {
-  display: grid;
-  gap: 6px;
-  color: #45505d;
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.gem-plan-result {
-  margin: 16px 0 0;
-  border-radius: 8px;
-  background: #eaf2f8;
-  color: #17456b;
-  font-weight: 700;
-  padding: 12px 14px;
-}
-
-.task-form button,
-.event-form button,
-.guide-form button,
-.tip-form button,
-.task-card-foot button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 40px;
-  border: 1px solid #2c5f8a;
-  border-radius: 8px;
-  background: #2c5f8a;
-  color: #fff;
-  cursor: pointer;
-  font-weight: 800;
-  padding: 8px 14px;
-}
-
-.task-card-foot button {
-  min-height: 30px;
-  background: #fff;
-  color: #a02b36;
-  border-color: #a02b36;
-  font-size: 12px;
-  padding: 4px 10px;
-}
-
-.event-list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.event-card {
-  display: grid;
-  gap: 6px;
-  border: 1px solid rgba(23, 32, 42, 0.1);
-  border-left: 5px solid #cbd2d8;
-  border-radius: 8px;
-  background: #fbfcfd;
-  padding: 12px;
-}
-
-.event-card.active {
-  border-left-color: #2c5f8a;
-}
-
-.event-card.upcoming {
-  border-left-color: #b8860b;
-}
-
-.event-card.ended {
-  border-left-color: #9aa4ac;
-}
-
-.event-status {
-  width: fit-content;
+.badge {
+  font-size: 0.75rem;
+  padding: 0.1rem 0.6rem;
   border-radius: 999px;
-  background: #eaf2f8;
-  color: #2c5f8a;
-  font-size: 11px;
-  font-weight: 800;
-  padding: 4px 8px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  white-space: nowrap;
 }
 
-.event-card.upcoming .event-status {
-  background: #fbf1da;
-  color: #b8860b;
+.run-meta,
+.setup-members,
+.setup-obtained {
+  margin: 0.35rem 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
 }
 
-.event-card.ended .event-status {
-  background: #eceff1;
-  color: #65717e;
+.run-note,
+.setup-card p,
+.note-card p {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
 }
 
-.event-card p {
-  margin: 0;
-  color: #45505d;
-  line-height: 1.6;
+.note-category {
+  display: inline-block;
+  font-size: 0.72rem;
+  color: var(--accent);
+  margin-bottom: 0.2rem;
 }
 
-.event-card button {
-  justify-self: start;
-  border: 1px solid #a02b36;
-  border-radius: 8px;
-  background: #fff;
-  color: #a02b36;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 800;
-  padding: 6px 10px;
-}
-
-.guide-list {
+/* 道具 */
+.gear-grid {
   display: grid;
-  gap: 10px;
-  margin-top: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0 0.9rem;
 }
 
-.guide-card {
-  display: grid;
-  gap: 6px;
-  border: 1px solid rgba(23, 32, 42, 0.1);
-  border-radius: 8px;
-  background: #fbfcfd;
-  padding: 14px;
+/* このサイトについて */
+.about-section p {
+  margin: 0 0 0.9rem;
+  font-size: 0.9rem;
 }
 
-.guide-card h3 {
-  margin: 0;
-  font-size: 18px;
+.trademark {
+  color: var(--muted);
+  font-size: 0.8rem;
 }
 
-.guide-card p {
-  margin: 0;
-  color: #45505d;
-  line-height: 1.6;
-}
-
-.guide-card button {
-  justify-self: start;
-  border: 1px solid #a02b36;
-  border-radius: 8px;
-  background: #fff;
-  color: #a02b36;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 800;
-  padding: 6px 10px;
-}
-
-.tip-list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.tip-card {
-  display: grid;
-  gap: 6px;
-  align-content: start;
-  border: 1px solid rgba(23, 32, 42, 0.1);
-  border-radius: 8px;
-  background: #fbfcfd;
-  padding: 14px;
-}
-
-.tip-category {
-  width: fit-content;
-  border-radius: 999px;
-  background: #eaf2f8;
-  color: #2c5f8a;
-  font-size: 11px;
-  font-weight: 800;
-  padding: 4px 8px;
-}
-
-.tip-card h3 {
-  margin: 0;
-  font-size: 16px;
-}
-
-.tip-card p {
-  margin: 0;
-  color: #45505d;
-  line-height: 1.6;
-}
-
-.tip-card button {
-  justify-self: start;
-  border: 1px solid #a02b36;
-  border-radius: 8px;
-  background: #fff;
-  color: #a02b36;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 800;
-  padding: 6px 10px;
-}
-
-.gear-list {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.gear-card {
-  display: grid;
-  gap: 8px;
-  border: 1px solid rgba(23, 32, 42, 0.1);
-  border-radius: 8px;
-  background: #fbfcfd;
-  padding: 14px;
-}
-
-.gear-card p {
-  margin: 0;
-  color: #45505d;
-  line-height: 1.5;
-  font-size: 13px;
-}
-
-.gear-card input {
-  border: 1px solid rgba(23, 32, 42, 0.15);
-  border-radius: 6px;
-  padding: 8px;
-}
-
-.gear-card a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #2c5f8a;
-  border-radius: 8px;
-  background: #2c5f8a;
-  color: #fff;
-  font-weight: 800;
-  padding: 8px 12px;
-  text-decoration: none;
-}
-
-.gear-card a.disabled-link {
-  pointer-events: none;
-  border-color: #cbd2d8;
-  background: #eceff1;
-  color: #9aa4ac;
-}
-
-.ad-section {
-  margin-bottom: 24px;
-}
-
-.ad-slot {
-  border: 1px dashed rgba(23, 32, 42, 0.25);
-  border-radius: 8px;
-  background: #fff;
-  color: #65717e;
-  font-size: 13px;
-  text-align: center;
-  padding: 24px;
-}
-
-.empty-text {
-  color: #65717e;
-  grid-column: 1 / -1;
-}
-
-input,
-select,
-textarea {
-  border: 1px solid rgba(23, 32, 42, 0.15);
-  border-radius: 6px;
-  padding: 9px 10px;
-}
-
-@media (max-width: 920px) {
-  .hero {
-    grid-template-columns: 1fr;
+@media (min-width: 40rem) {
+  .app {
+    padding: 2.5rem 1.5rem 5rem;
   }
 
-  .task-list,
-  .event-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .gear-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .task-form,
-  .event-form,
-  .guide-form,
-  .tip-form,
-  .gem-plan-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 560px) {
-  .hero,
-  .daily-tasks-section,
-  .gem-plan-section,
-  .events-section,
-  .party-guide-section,
-  .tips-section,
-  .gear-section,
-  .ad-section {
-    width: min(100% - 24px, 1100px);
-  }
-
-  .task-list,
-  .event-list,
-  .tip-list,
-  .gear-list {
-    grid-template-columns: 1fr;
-  }
-
-  .section-title {
-    flex-direction: column;
-    align-items: flex-start;
+  .hero h1 {
+    font-size: 2rem;
   }
 }
