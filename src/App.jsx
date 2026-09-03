@@ -41,6 +41,22 @@ const emptyNoteForm = { category: 'オートの挙動', title: '', body: '' }
 
 const noteCategories = ['オートの挙動', '編成の考え方', '装備・こころ', '検証のやり方']
 
+// 運営者自身の検証記録。新しい順に積み、上書きしない。
+//
+// 「検証結果はこちらで用意しない」という方針は、**架空の結果を作らない**という
+// 意味であって、運営者が実際に走らせた記録まで載せないという意味ではない。
+// このサイトは無課金・オート戦闘でどこまで行けるかを記録する場所なので、
+// 運営者の到達点こそが中身になる。閲覧者の記録（localStorage）とは別に置く。
+const ownerRuns = [
+  {
+    date: '2026-09-03',
+    target: 'ストーリー16章10',
+    result: 'failed',
+    party: '守り人 Lv90 / 魔人 Lv85 / 大神官 Lv90 / 時渡剣士 Lv84',
+    note: 'レベルは足りていそうだが抜けられない。オートだと回復と補助の順番を指定できず、状態異常をもらった時点で立て直せないところで崩れている。',
+  },
+]
+
 const gearCategories = [
   { id: 'battery', label: 'モバイルバッテリー' },
   { id: 'stand', label: 'スマホスタンド・ホルダー' },
@@ -267,6 +283,24 @@ function App() {
             記録する
           </button>
         </form>
+
+        <h3>運営者の記録</h3>
+        <p className="section-lead">
+          この条件で実際に走らせている運営者本人の到達点です。下の入力欄はご自身用で、
+          書いた内容はお使いの端末にだけ保存されます。運営者には送信されません。
+        </p>
+        <ul className="run-list">
+          {ownerRuns.map((run) => (
+            <li key={run.date + run.target} className={`run-card result-${run.result}`}>
+              <div className="run-head">
+                <strong>{run.target}</strong>
+                <span className="badge">{resultLabel(run.result)}</span>
+              </div>
+              <p className="run-meta">{run.date} ・ {run.party}</p>
+              <p className="run-note">{run.note}</p>
+            </li>
+          ))}
+        </ul>
 
         {runs.length > 0 && (
           <ul className="run-list">
